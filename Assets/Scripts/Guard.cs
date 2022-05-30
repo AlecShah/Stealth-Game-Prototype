@@ -10,8 +10,21 @@ public class Guard : MonoBehaviour
     public float waitTime = .3f;
     public float turnSpeed = 90f;
 
+    public Light spotlight;
+    public float viewDistance;
+    private float viewAngle;
+
+    private Transform smoke;
+    public LayerMask viewMask;
+    private Color originalSpotlightColor;
+
     private void Start()
     {
+
+        smoke = GameObject.FindGameObjectWithTag("smoke").transform;
+        viewAngle = spotlight.spotAngle;
+        originalSpotlightColor = spotlight.color;
+
         Vector3[] waypoints = new Vector3[pathway.childCount];
         for (int i = 0; i < waypoints.Length; i++)
         {
@@ -20,6 +33,36 @@ public class Guard : MonoBehaviour
         }
 
         StartCoroutine(FollowPath(waypoints));
+    }
+
+
+    private void Update()
+    {
+        if (CanSeeSmoke())
+        {
+            spotlight.color = Color.red;
+        }
+        else
+        {
+            spotlight.color = originalSpotlightColor;
+        }
+    }
+
+    bool CanSeeSmoke()
+    {
+        if (Vector3.Distance(transform.position, smoke.position) < viewDistance)
+        {
+            Vector3 dirToSmoke = (smoke.position - transform.position).normalized;
+            float angleBetweenGuardandSmoke = Vector3.Angle(transform.forward, dirToSmoke);
+            if (angleBetweenGuardandSmoke < viewAngle / 2f)
+            {
+                if (!Physics.Linecast(transform.position, smoke.position, viewMask))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     IEnumerator FollowPath(Vector3[] waypoints)
@@ -50,7 +93,7 @@ public class Guard : MonoBehaviour
         Vector3 dirToLookTarget = (lookTarget - transform.position).normalized;
         float targetAngle = 90 - Mathf.Atan2(dirToLookTarget.z, dirToLookTarget.x) * Mathf.Rad2Deg;
 
-        while (Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle) > 0.05f)
+        while (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle)) > 0.05f)
         {
             float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetAngle, turnSpeed * Time.deltaTime);
             transform.eulerAngles = Vector3.up * angle;
@@ -59,6 +102,7 @@ public class Guard : MonoBehaviour
 
     }
 
+    
     private void OnDrawGizmos()
     {
         Vector3 startPosition = pathway.GetChild(0).position;
@@ -72,7 +116,11 @@ public class Guard : MonoBehaviour
         }
 
         Gizmos.DrawLine(previousPosition, startPosition);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * viewDistance);
     }
+    
 
 
 }
