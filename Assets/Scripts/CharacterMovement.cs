@@ -10,14 +10,14 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float crouchMoveSpeed;
 
-    //Gravity(Add later if there's time or I want to expand with jump)
-    //====================================================
-    //[SerializeField] private bool isGrounded;
-    //[SerializeField] private float checkGround;
-    //[SerializeField]  private LayerMask groundMask;
-    //[SerializeField] private float gravity;
 
-    //private Vector3 velocity;
+    //====================================================
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private float checkGround;
+    [SerializeField]  private LayerMask groundMask;
+    [SerializeField] private float gravity;
+
+    private Vector3 velocity;
 
     private Vector3 moveDirection;
 
@@ -103,6 +103,13 @@ public class CharacterMovement : MonoBehaviour
 
     private void Move()
     {
+        isGrounded = Physics.CheckSphere(transform.position, checkGround, groundMask);
+
+        if(isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
         float moveZ = Input.GetAxis("Vertical");
 
         moveDirection = new Vector3(0, 0, moveZ);
@@ -132,6 +139,9 @@ public class CharacterMovement : MonoBehaviour
 
         moveDirection *= moveSpeed;
         controller.Move(moveDirection * Time.deltaTime);
+
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 
     private void Walk()
