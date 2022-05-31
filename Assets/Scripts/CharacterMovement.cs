@@ -21,11 +21,19 @@ public class CharacterMovement : MonoBehaviour
 
     private Vector3 moveDirection;
 
+    private bool canUseSmokeSwitch;
+    //private SmokeSwitch smokeDevice;
+    private SmokeSwitch smokeDevice;
+
+
     CharacterController controller;
     Animator animate;
 
     void Start()
     {
+        canUseSmokeSwitch = false;
+        smokeDevice = null;
+
         controller = GetComponent<CharacterController>();
         animate = GetComponent<Animator>();
     }
@@ -43,6 +51,54 @@ public class CharacterMovement : MonoBehaviour
             animate.SetInteger("Stance", 0);
         }
         Move();
+
+        RaycastCheck();
+
+        if (Input.GetKey(KeyCode.P) && canUseSmokeSwitch == true && smokeDevice != null)
+        {
+            OperateSmokeSwitch();
+        }
+
+    }
+
+
+    private void OperateSmokeSwitch()
+    {
+        Debug.Log("using smoke switch!");
+        smokeDevice.ChangeSmokeState();
+    }
+
+    private void RaycastCheck()
+    {
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 1;
+        Debug.DrawRay(transform.position, forward, Color.green);
+
+        RaycastHit hit;
+        if (Physics.Raycast(this.gameObject.transform.position, this.gameObject.transform.forward, out hit, 3) && hit.transform.tag == "smoke switch")
+        {
+
+
+            if (canUseSmokeSwitch == false)
+            {
+                canUseSmokeSwitch = true;
+                smokeDevice = hit.transform.gameObject.GetComponent<SmokeSwitch>();
+                //smokeDevice = hit.collider.gameObject.GetComponent<SmokeSwitch>();
+                //smokeDevice = hit.gameObject.GetComponent<SmokeSwitch>();
+            }
+
+
+            //Debug.Log("hit");
+        }
+        else
+        {
+            if (canUseSmokeSwitch == true)
+            {
+                canUseSmokeSwitch = false;
+                smokeDevice = null;
+            }
+
+            //Debug.Log("no hit");
+        }
     }
 
     private void Move()
@@ -106,4 +162,8 @@ public class CharacterMovement : MonoBehaviour
         moveSpeed = crouchMoveSpeed;
         animate.SetFloat("CBlend", 1, 0.15f, Time.deltaTime);
     }
-}
+
+    
+
+
+    }
