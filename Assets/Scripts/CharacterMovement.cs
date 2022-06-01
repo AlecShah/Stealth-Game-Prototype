@@ -10,15 +10,12 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float crouchMoveSpeed;
 
-
-    //====================================================
     [SerializeField] private bool isGrounded;
     [SerializeField] private float checkGround;
     [SerializeField]  private LayerMask groundMask;
     [SerializeField] private float gravity;
 
     private Vector3 velocity;
-
     private Vector3 moveDirection;
 
     private bool canUseSmokeSwitch;
@@ -111,15 +108,16 @@ public class CharacterMovement : MonoBehaviour
         }
 
         float moveZ = Input.GetAxis("Vertical");
+        float moveX = Input.GetAxis("Horizontal");
 
-        moveDirection = new Vector3(0, 0, moveZ);
+        moveDirection = new Vector3(moveX, 0, moveZ);
         moveDirection = transform.TransformDirection(moveDirection);
 
-        if (moveDirection != Vector3.zero && !Input.GetKey(KeyCode.LeftShift))
+        if (moveDirection != Vector3.zero && !Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W))
         {
             Walk();
         }
-        else if (moveDirection != Vector3.zero && Input.GetKey(KeyCode.LeftShift))
+        else if (moveDirection != Vector3.zero && Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W))
         {
             Run();
         }
@@ -127,14 +125,38 @@ public class CharacterMovement : MonoBehaviour
         {
             Idle();
         }
+        if (moveDirection != Vector3.zero && !Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.D))
+        {
+            RightStrafe();
+        }
+        if (moveDirection != Vector3.zero && !Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.A))
+        {
+            LeftStrafe();
+        }
+        if (moveDirection != Vector3.zero && !Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.S))
+        {
+            WalkBack();
+        }
 
         if (moveDirection == Vector3.zero && Input.GetKey(KeyCode.LeftControl))
         {
             CrouchIdle();
         }
-        if (moveDirection != Vector3.zero && Input.GetKey(KeyCode.LeftControl))
+        if (moveDirection != Vector3.zero && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W))
         {
             CrouchWalk();
+        }
+        if (moveDirection != Vector3.zero && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.D))
+        {
+            CrouchRStrafe();
+        }
+        if (moveDirection != Vector3.zero && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.A))
+        {
+            CrouchLStrafe();
+        }
+        if (moveDirection != Vector3.zero && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.S))
+        {
+            CrouchBackward();
         }
 
         moveDirection *= moveSpeed;
@@ -147,33 +169,66 @@ public class CharacterMovement : MonoBehaviour
     private void Walk()
     {
         moveSpeed = walkSpeed;
-        animate.SetFloat("Blend", 0.5f, 0.15f, Time.deltaTime);
+        animate.SetFloat("Blend", 0.6f, 0.25f, Time.deltaTime);
     }
 
     private void Idle()
     {
-        animate.SetFloat("Blend", 0, 0.15f, Time.deltaTime);
+        animate.SetFloat("Blend", 1, 0.25f, Time.deltaTime);
     }
 
     private void Run()
     {
         moveSpeed = runSpeed;
-        animate.SetFloat("Blend", 1, 0.15f, Time.deltaTime);
+        animate.SetFloat("Blend", 0, 0.25f, Time.deltaTime);
     }
+
+    private void RightStrafe()
+    {
+        moveSpeed = walkSpeed;
+        animate.SetFloat("Blend", 0.2f, 0.25f, Time.deltaTime);
+    }
+
+    private void LeftStrafe()
+    {
+        moveSpeed = walkSpeed;
+        animate.SetFloat("Blend", 0.4f, 0.25f, Time.deltaTime);
+    }
+
+    private void WalkBack()
+    {
+        moveSpeed = walkSpeed;
+        animate.SetFloat("Blend", 0.8f, 0.25f, Time.deltaTime);
+    }
+
 
     private void CrouchIdle()
     {
-        animate.SetFloat("CBlend", 0, 0.15f, Time.deltaTime);
+        animate.SetFloat("CBlend", 0, 0.25f, Time.deltaTime);
 
     }
 
     private void CrouchWalk()
     {
         moveSpeed = crouchMoveSpeed;
-        animate.SetFloat("CBlend", 1, 0.15f, Time.deltaTime);
+        animate.SetFloat("CBlend", 0.5f, 0.25f, Time.deltaTime);
     }
 
-    
-
-
+    private void CrouchRStrafe()
+    {
+        moveSpeed = crouchMoveSpeed;
+        animate.SetFloat("CBlend", 1, 0.25f, Time.deltaTime);
     }
+
+    private void CrouchLStrafe()
+    {
+        moveSpeed = crouchMoveSpeed;
+        animate.SetFloat("CBlend", 0.75f, 0.25f, Time.deltaTime);
+    }
+
+    private void CrouchBackward()
+    {
+        moveSpeed = crouchMoveSpeed;
+        animate.SetFloat("CBlend", 0.25f, 0.25f, Time.deltaTime);
+    }
+}
