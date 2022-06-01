@@ -91,6 +91,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Machine
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1f4262140df359b4f8ac9ebe3a3dd7b9, type: 3}
+      propertyPath: m_TagString
+      value: smoke switch
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f4262140df359b4f8ac9ebe3a3dd7b9, type: 3}
 --- !u!1 &225380874152877040 stripped
@@ -111,6 +115,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 32, y: 22, z: 18}
   m_Center: {x: 0.6, y: 3, z: 1.6}
+--- !u!114 &501019938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225380874152877040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554797792ae1def47bba1c0f48f512c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isSmokeOn: 0
+  Smoke: {fileID: 0}
 --- !u!4 &606690834078548298 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1f4262140df359b4f8ac9ebe3a3dd7b9, type: 3}

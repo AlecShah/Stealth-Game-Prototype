@@ -19,12 +19,13 @@ public class CharacterMovement : MonoBehaviour
     private Vector3 moveDirection;
 
     private bool canUseSmokeSwitch;
-    //private SmokeSwitch smokeDevice;
     private SmokeSwitch smokeDevice;
 
 
     CharacterController controller;
     Animator animate;
+
+
 
     void Start()
     {
@@ -51,18 +52,19 @@ public class CharacterMovement : MonoBehaviour
 
         RaycastCheck();
 
-        if (Input.GetKey(KeyCode.P) && canUseSmokeSwitch == true && smokeDevice != null)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && canUseSmokeSwitch == true && smokeDevice != null)
         {
             OperateSmokeSwitch();
-        }
+        }       
 
     }
 
 
     private void OperateSmokeSwitch()
     {
-        Debug.Log("using smoke switch!");
+        //Debug.Log("using smoke switch!");
         smokeDevice.ChangeSmokeState();
+        
     }
 
     private void RaycastCheck()
@@ -79,12 +81,9 @@ public class CharacterMovement : MonoBehaviour
             {
                 canUseSmokeSwitch = true;
                 smokeDevice = hit.transform.gameObject.GetComponent<SmokeSwitch>();
-                //smokeDevice = hit.collider.gameObject.GetComponent<SmokeSwitch>();
-                //smokeDevice = hit.gameObject.GetComponent<SmokeSwitch>();
+
             }
 
-
-            //Debug.Log("hit");
         }
         else
         {
@@ -94,7 +93,6 @@ public class CharacterMovement : MonoBehaviour
                 smokeDevice = null;
             }
 
-            //Debug.Log("no hit");
         }
     }
 

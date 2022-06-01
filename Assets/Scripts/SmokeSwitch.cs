@@ -10,17 +10,24 @@ public class SmokeSwitch : MonoBehaviour
 
     public ParticleSystem Smoke;
 
+    private Collider smokeCollider;
+
     void Start()
     {
-        isSmokeOn = true;   
+        isSmokeOn = true;
+        smokeCollider = Smoke.gameObject.GetComponentInChildren<Collider>();
     }
 
 
     public void ChangeSmokeState()
     {
+
+
+        smokeCollider.enabled = !smokeCollider.enabled;
         if (isSmokeOn)
         {
             isSmokeOn = false;
+            
         }
         else
         {

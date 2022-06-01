@@ -18,9 +18,12 @@ public class Guard : MonoBehaviour
     public LayerMask viewMask;
     private Color originalSpotlightColor;
 
+    Animator animate;
+
     private void Start()
     {
 
+        animate = GetComponent<Animator>();
         smoke = GameObject.FindGameObjectWithTag("smoke").transform;
         viewAngle = spotlight.spotAngle;
         originalSpotlightColor = spotlight.color;
@@ -76,13 +79,17 @@ public class Guard : MonoBehaviour
         while (true)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, speed * Time.deltaTime);
+            animate.SetFloat("Blend", 1, 0.25f, Time.deltaTime);
             if (transform.position == targetWaypoint)
             {
                 targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
                 targetWaypoint = waypoints[targetWaypointIndex];
                 yield return new WaitForSeconds(waitTime);
+                
                 yield return StartCoroutine(TurnToFace(targetWaypoint));
             }
+
+            
             yield return null;
         }
 
@@ -95,6 +102,7 @@ public class Guard : MonoBehaviour
 
         while (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle)) > 0.05f)
         {
+            animate.SetFloat("Blend", 0, 0.25f, Time.deltaTime);
             float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetAngle, turnSpeed * Time.deltaTime);
             transform.eulerAngles = Vector3.up * angle;
             yield return null;
