@@ -9,6 +9,8 @@ public class SmokeHitbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        Physics.IgnoreLayerCollision(8, 9);
         Physics.IgnoreCollision(player.GetComponent<Collider>(), GetComponent<Collider>());
     }
 

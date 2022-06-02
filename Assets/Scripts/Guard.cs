@@ -6,9 +6,13 @@ public class Guard : MonoBehaviour
 {
 
     public Transform pathway;
-    public float speed = 5;
+    public float speed = 3;
     public float waitTime = .3f;
     public float turnSpeed = 90f;
+
+    public bool PathLoop;
+    private bool isForwardPath;
+
 
     public Light spotlight;
     public float viewDistance;
@@ -27,6 +31,7 @@ public class Guard : MonoBehaviour
         smoke = GameObject.FindGameObjectWithTag("smoke").transform;
         viewAngle = spotlight.spotAngle;
         originalSpotlightColor = spotlight.color;
+        isForwardPath = true;
 
         Vector3[] waypoints = new Vector3[pathway.childCount];
         for (int i = 0; i < waypoints.Length; i++)
@@ -44,10 +49,12 @@ public class Guard : MonoBehaviour
         if (CanSeeSmoke())
         {
             spotlight.color = Color.red;
+            speed += 5 * Time.deltaTime;
         }
         else
         {
             spotlight.color = originalSpotlightColor;
+            speed = 3;
         }
     }
 
@@ -79,10 +86,42 @@ public class Guard : MonoBehaviour
         while (true)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, speed * Time.deltaTime);
-            animate.SetFloat("Blend", 1, 0.25f, Time.deltaTime);
+            if (CanSeeSmoke() == false)
+            {
+                
+                animate.SetFloat("Blend", 0.5f, 0.25f, Time.deltaTime);
+            }
+            else
+            {
+                animate.SetFloat("Blend", 1, 0.25f, Time.deltaTime);
+            }
+
             if (transform.position == targetWaypoint)
             {
-                targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
+                if (PathLoop == true)
+                {
+                    targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
+                }
+                else
+                {
+                    if(isForwardPath == true && targetWaypointIndex < waypoints.Length - 1)
+                    {
+                        targetWaypointIndex = targetWaypointIndex + 1;
+                    }
+                    else if (isForwardPath == true)
+                    {
+                        isForwardPath = false;
+                    }
+
+                    if (isForwardPath == false && targetWaypointIndex > 0)
+                    {
+                        targetWaypointIndex = targetWaypointIndex - 1;
+                    }
+                    else if (isForwardPath == false)
+                    {
+                        isForwardPath = true;
+                    }
+                }
                 targetWaypoint = waypoints[targetWaypointIndex];
                 yield return new WaitForSeconds(waitTime);
                 
@@ -123,7 +162,10 @@ public class Guard : MonoBehaviour
             previousPosition = waypoint.position;
         }
 
-        Gizmos.DrawLine(previousPosition, startPosition);
+        if (PathLoop == true)
+        {
+            Gizmos.DrawLine(previousPosition, startPosition);
+        }
 
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, transform.forward * viewDistance);

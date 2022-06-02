@@ -14,7 +14,7 @@ public class SmokeSwitch : MonoBehaviour
 
     void Start()
     {
-        isSmokeOn = true;
+        isSmokeOn = false;
         smokeCollider = Smoke.gameObject.GetComponentInChildren<Collider>();
     }
 
@@ -40,11 +40,11 @@ public class SmokeSwitch : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isSmokeOn)
+        if (isSmokeOn && !Smoke.isEmitting)
         {
             Smoke.Play();
         }
-        else
+        else if (!isSmokeOn && Smoke.isPlaying)
         {
             Smoke.Stop();
         }
